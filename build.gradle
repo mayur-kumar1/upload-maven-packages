@@ -1,0 +1,26 @@
+plugins {
+    id("maven-publish")
+    id("java")
+}
+def awesomeness = artifacts.add('archives', file("$project.buildDir/awesomeness.txt"))
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/owner/repository")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            artifact awesomeness
+            artifactId "awesome-text"
+            groupId 'com.fake.publisher'
+            version '0.1.0-SNAPSHOT'
+        }
+    }
+}
